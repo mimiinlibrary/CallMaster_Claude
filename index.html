@@ -324,27 +324,55 @@ body {
 /* Game area */
 .game-area {
   position: absolute;
-  top: 90px; left: 0; right: 0; bottom: 110px;
+  top: 90px; left: 0; right: 0; bottom: 90px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   z-index: 5;
   padding: 10px 20px;
 }
 
+/* Squirrel row — between answer area and bottom bar */
+.squirrel-row {
+  width: 100%; max-width: 680px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4px 8px 0;
+  gap: 12px;
+  min-height: 76px;
+  flex-shrink: 0;
+}
+
 /* Squirrel character */
 .squirrel-char {
-  position: absolute;
-  bottom: 10px; left: 20px;
-  width: 70px; height: 70px;
-  z-index: 8;
+  position: relative;
+  width: 68px; height: 68px;
+  flex-shrink: 0;
   animation: squirrelIdle 1.5s ease-in-out infinite;
-  transition: left 0.4s ease-out;
 }
 .squirrel-char.happy { animation: squirrelHappy 0.5s ease-in-out 3; }
 .squirrel-char.sad { animation: squirrelSad 1s ease-in-out infinite; }
-.squirrel-char.fast { transition: left 0.15s ease-out; }
+
+/* Emotion bubble next to squirrel */
+.emotion-bubble {
+  font-size: 13px;
+  color: rgba(253,246,227,0.9);
+  background: rgba(61,31,10,0.65);
+  border: 1px solid rgba(232,160,48,0.35);
+  border-radius: 16px;
+  padding: 7px 14px;
+  line-height: 1.5;
+  max-width: 340px;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.emotion-bubble.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
 
 @keyframes squirrelIdle {
   0%,100%{transform:translateY(0);}
@@ -850,6 +878,13 @@ v.2 c.1</div>
         <div class="slot" id="slot-3" data-slot="3"><div class="slot-number">④</div></div>
       </div>
     </div>
+    <!-- Squirrel row -->
+    <div class="squirrel-row">
+      <div class="squirrel-char" id="squirrelChar">
+        <svg id="squirrelSvg" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg" width="68" height="68"></svg>
+      </div>
+      <div class="emotion-bubble" id="emotionBubble"></div>
+    </div>
   </div>
 
   <!-- Bottom bar -->
@@ -860,12 +895,6 @@ v.2 c.1</div>
       <button class="btn-check" id="checkBtn" onclick="checkAnswer()">✅ 배열 완료</button>
     </div>
     <div class="credit-tag">사서교사 이미혜 제작</div>
-  </div>
-
-  <!-- Squirrel character -->
-  <div class="squirrel-char" id="squirrelChar" style="left:20px">
-    <!-- Squirrel idle SVG -->
-    <svg id="squirrelSvg" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg" width="70" height="70"></svg>
   </div>
 
   <!-- Hint popup -->
@@ -934,7 +963,6 @@ let gameState = {
   currentBooks: [],
   slotBooks: [null, null, null, null],
   squirrelState: 'idle',
-  squirrelPos: 20,
   boosterActive: false,
   currentDragId: null
 };
@@ -1365,7 +1393,7 @@ function checkAnswer() {
     gameState.wrongCount = 0;
     updateBadgeDisplay();
     setFeedback(`✅ 정답! 훌륭해요! (${gameState.score}점)`, 'correct');
-    setSquirrelState('happy');
+    setSquirrelState('happy', '🎉 정답이에요!');
     hideHint();
 
     // Combo effect
@@ -1380,11 +1408,6 @@ function checkAnswer() {
     }
     updateComboDisplay();
 
-    // Move squirrel
-    const newPos = Math.min(window.innerWidth - 100, gameState.squirrelPos + 60);
-    gameState.squirrelPos = newPos;
-    document.getElementById('squirrelChar').style.left = newPos + 'px';
-
     setTimeout(() => {
       setSquirrelState('idle');
       newQuestion();
@@ -1393,7 +1416,7 @@ function checkAnswer() {
     gameState.wrongCount++;
     gameState.combo = 0;
     updateComboDisplay();
-    setSquirrelState('sad');
+    setSquirrelState('sad', '😢 다시 해봐요...');
     setFeedback(`❌ 다시 생각해보세요! (${gameState.wrongCount}회 오답)`, 'wrong');
 
     if (gameState.wrongCount >= 2) {
@@ -1438,11 +1461,18 @@ function setFeedback(msg, cls) {
   el.className = 'feedback-msg' + (cls ? ` ${cls}` : '');
 }
 
-function setSquirrelState(state) {
+function setSquirrelState(state, bubbleMsg) {
   gameState.squirrelState = state;
   const el = document.getElementById('squirrelChar');
-  el.className = 'squirrel-char' + (gameState.boosterActive ? ' fast' : '') + (state !== 'idle' ? ` ${state}` : '');
+  el.className = 'squirrel-char' + (state !== 'idle' ? ` ${state}` : '');
   renderSquirrel(state);
+  const bubble = document.getElementById('emotionBubble');
+  if (bubbleMsg) {
+    bubble.textContent = bubbleMsg;
+    bubble.classList.add('visible');
+  } else {
+    bubble.classList.remove('visible');
+  }
 }
 
 function updateComboDisplay() {
@@ -1536,7 +1566,7 @@ function startGame() {
   gameState.score = 0;
   gameState.combo = 0;
   gameState.wrongCount = 0;
-  gameState.squirrelPos = 20;
+
   gameState.boosterActive = false;
   if (gameState.timerInterval) clearInterval(gameState.timerInterval);
 
@@ -1546,7 +1576,7 @@ function startGame() {
 
   updateBadgeDisplay();
   renderSquirrel('idle');
-  document.getElementById('squirrelChar').style.left = '20px';
+
   document.getElementById('comboDisplay').classList.add('hidden');
 
   newQuestion();
@@ -1587,4 +1617,4 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
-</html>v
+</html>
