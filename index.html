@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>책은 제자리에 — 서가뜰 도서관</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700;900&display=swap');
+
+:root {
+  --cream: #fdf6e3;
+  --warm-brown: #7c4a1e;
+  --deep-brown: #3d1f0a;
+  --amber: #e8a030;
+  --gold: #f5c842;
+  --sage: #5a7a5a;
+  --sage-light: #8aad8a;
+  --sky: #6baed6;
+  --rose: #e07b70;
+  --book1: #c0392b;
+  --book2: #2980b9;
+  --book3: #27ae60;
+  --book4: #8e44ad;
+  --book5: #d35400;
+  --book6: #16a085;
+  --shadow: rgba(61,31,10,0.18);
+  --panel: rgba(253,246,227,0.97);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--cream);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  user-select: none;
+}
+
+/* ===== SCREENS ===== */
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.screen.hidden { display: none !important; }
+
+/* ===== OPENING SCREEN ===== */
+#openingScreen {
+  background: linear-gradient(160deg, #1a0a00 0%, #3d1f0a 40%, #5a3010 70%, #7c4a1e 100%);
+  overflow: hidden;
+}
+
+.library-bg {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 2px, transparent 2px, transparent 60px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px);
+}
+
+.floating-books {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.fb {
+  position: absolute;
+  width: 28px; height: 60px;
+  border-radius: 3px;
+  opacity: 0.18;
+  animation: floatBook 8s ease-in-out infinite;
+}
+.fb:nth-child(1){left:5%;top:20%;background:#c0392b;animation-delay:0s;}
+.fb:nth-child(2){left:12%;top:60%;background:#2980b9;animation-delay:1.2s;}
+.fb:nth-child(3){left:22%;top:35%;background:#27ae60;animation-delay:2.4s;}
+.fb:nth-child(4){left:35%;top:75%;background:#8e44ad;animation-delay:0.6s;}
+.fb:nth-child(5){left:50%;top:15%;background:#d35400;animation-delay:3s;}
+.fb:nth-child(6){left:65%;top:55%;background:#16a085;animation-delay:1.8s;}
+.fb:nth-child(7){left:78%;top:30%;background:#c0392b;animation-delay:0.9s;}
+.fb:nth-child(8){left:88%;top:70%;background:#f39c12;animation-delay:2.1s;}
+.fb:nth-child(9){left:93%;top:10%;background:#2980b9;animation-delay:3.6s;}
+
+@keyframes floatBook {
+  0%,100%{transform:translateY(0) rotate(-3deg);}
+  50%{transform:translateY(-20px) rotate(3deg);}
+}
+
+.opening-scene {
+  position: relative;
+  z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0;
+}
+
+/* Squirrel character SVG area */
+.squirrel-scene {
+  width: 320px; height: 260px;
+  position: relative;
+  animation: sceneBob 3s ease-in-out infinite;
+}
+
+@keyframes sceneBob {
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-8px);}
+}
+
+.dream-bubble {
+  position: absolute;
+  top: 0; right: 20px;
+  width: 130px; height: 100px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  display: flex; align-items: center; justify-content: center;
+  animation: dreamPulse 2s ease-in-out infinite;
+}
+@keyframes dreamPulse {
+  0%,100%{transform:scale(1);opacity:0.8;}
+  50%{transform:scale(1.06);opacity:1;}
+}
+.dream-text {
+  font-size: 11px; color: #ffd700; text-align: center; font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  line-height: 1.4;
+}
+
+.opening-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 900;
+  color: #fdf6e3;
+  text-align: center;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 40px rgba(232,160,48,0.4);
+  letter-spacing: 4px;
+  animation: titleGlow 2s ease-in-out infinite alternate;
+  margin-top: -10px;
+}
+@keyframes titleGlow {
+  from{text-shadow:0 4px 20px rgba(0,0,0,0.6),0 0 30px rgba(232,160,48,0.3);}
+  to{text-shadow:0 4px 20px rgba(0,0,0,0.6),0 0 60px rgba(245,200,66,0.7),0 0 80px rgba(232,160,48,0.4);}
+}
+
+.opening-subtitle {
+  font-size: 13px; color: rgba(253,246,227,0.65);
+  letter-spacing: 6px; margin-top: 6px; text-transform: uppercase;
+}
+
+.opening-buttons {
+  display: flex; gap: 16px; margin-top: 32px; flex-wrap: wrap; justify-content: center;
+}
+
+.btn-primary {
+  padding: 14px 36px;
+  background: linear-gradient(135deg, var(--amber), var(--gold));
+  color: var(--deep-brown);
+  border: none; border-radius: 50px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(232,160,48,0.5);
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 8px 30px rgba(232,160,48,0.7);
+}
+
+.btn-secondary {
+  padding: 14px 36px;
+  background: rgba(253,246,227,0.12);
+  color: var(--cream);
+  border: 2px solid rgba(253,246,227,0.4);
+  border-radius: 50px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 16px; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+.btn-secondary:hover {
+  background: rgba(253,246,227,0.2);
+  transform: translateY(-2px);
+}
+
+/* ===== MODAL (guide) ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-overlay.hidden { display: none; }
+.modal-box {
+  background: var(--cream);
+  border-radius: 20px;
+  padding: 36px 40px;
+  max-width: 520px; width: 92%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  position: relative;
+}
+.modal-box h2 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 22px; color: var(--deep-brown);
+  margin-bottom: 20px; text-align: center;
+}
+.modal-box .close-btn {
+  position: absolute; top: 16px; right: 20px;
+  background: none; border: none;
+  font-size: 24px; cursor: pointer; color: var(--warm-brown);
+  line-height: 1;
+}
+.guide-section { margin-bottom: 18px; }
+.guide-section h3 {
+  font-size: 14px; font-weight: 700; color: var(--warm-brown);
+  margin-bottom: 8px; border-left: 3px solid var(--amber); padding-left: 8px;
+}
+.guide-section p, .guide-section li {
+  font-size: 13px; color: #444; line-height: 1.7;
+}
+.guide-section ul { padding-left: 18px; }
+.call-no-example {
+  background: var(--deep-brown);
+  color: var(--cream);
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-family: monospace; font-size: 14px;
+  margin: 10px 0;
+  line-height: 1.9;
+}
+
+/* ===== GAME SCREEN ===== */
+#gameScreen {
+  background: linear-gradient(180deg, #e8dcc8 0%, #d4c4a0 50%, #c4a870 100%);
+  flex-direction: column;
+}
+
+/* Library shelf bg */
+.shelf-bg {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, #b8926a 0%, #a07850 100%);
+  overflow: hidden;
+}
+.shelf-line {
+  position: absolute; left: 0; right: 0;
+  height: 18px;
+  background: linear-gradient(180deg, #8b5e3c 0%, #6b3f1e 100%);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.shelf-line:nth-child(1){top:20%;}
+.shelf-line:nth-child(2){top:50%;}
+.shelf-line:nth-child(3){top:80%;}
+
+/* HUD */
+.hud {
+  position: absolute;
+  top: 12px; left: 0; right: 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 0 16px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hud-left { display: flex; flex-direction: column; gap: 6px; }
+
+.badge-display {
+  background: rgba(61,31,10,0.85);
+  border-radius: 12px;
+  padding: 6px 14px;
+  display: flex; align-items: center; gap: 8px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(232,160,48,0.4);
+}
+.badge-icon { font-size: 20px; }
+.badge-info { display: flex; flex-direction: column; }
+.badge-label { font-size: 9px; color: rgba(253,246,227,0.6); letter-spacing: 1px; }
+.badge-name { font-size: 12px; color: var(--gold); font-weight: 700; }
+
+.score-display {
+  background: rgba(61,31,10,0.85);
+  border-radius: 12px;
+  padding: 6px 14px;
+  color: var(--cream);
+  font-size: 12px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(232,160,48,0.2);
+}
+.score-display span { color: var(--gold); font-weight: 700; font-size: 16px; }
+
+.hud-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+
+.timer-display {
+  background: rgba(61,31,10,0.9);
+  border-radius: 12px;
+  padding: 8px 16px;
+  display: flex; align-items: center; gap: 8px;
+  backdrop-filter: blur(4px);
+  border: 2px solid rgba(232,160,48,0.5);
+}
+.timer-icon { font-size: 18px; }
+.timer-value {
+  font-size: 22px; font-weight: 900;
+  font-family: 'Courier New', monospace;
+  color: var(--gold);
+  min-width: 52px; text-align: right;
+}
+.timer-value.warning { color: #ff6b6b; animation: timerPulse 0.5s ease-in-out infinite alternate; }
+@keyframes timerPulse { from{opacity:1;} to{opacity:0.5;} }
+
+.combo-display {
+  background: linear-gradient(135deg, #e8a030, #f5c842);
+  color: var(--deep-brown);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 13px; font-weight: 900;
+  animation: comboPop 0.3s ease-out;
+  letter-spacing: 1px;
+}
+@keyframes comboPop {
+  0%{transform:scale(0.5);opacity:0;}
+  70%{transform:scale(1.15);}
+  100%{transform:scale(1);opacity:1;}
+}
+.combo-display.hidden { display: none; }
+
+/* Game area */
+.game-area {
+  position: absolute;
+  top: 90px; left: 0; right: 0; bottom: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  padding: 10px 20px;
+}
+
+/* Squirrel character */
+.squirrel-char {
+  position: absolute;
+  bottom: 10px; left: 20px;
+  width: 70px; height: 70px;
+  z-index: 8;
+  animation: squirrelIdle 1.5s ease-in-out infinite;
+  transition: left 0.4s ease-out;
+}
+.squirrel-char.happy { animation: squirrelHappy 0.5s ease-in-out 3; }
+.squirrel-char.sad { animation: squirrelSad 1s ease-in-out infinite; }
+.squirrel-char.fast { transition: left 0.15s ease-out; }
+
+@keyframes squirrelIdle {
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-5px);}
+}
+@keyframes squirrelHappy {
+  0%,100%{transform:translateY(0) rotate(0);}
+  25%{transform:translateY(-10px) rotate(-10deg);}
+  75%{transform:translateY(-10px) rotate(10deg);}
+}
+@keyframes squirrelSad {
+  0%,100%{transform:translateY(0) rotate(-3deg);}
+  50%{transform:translateY(3px) rotate(3deg);}
+}
+
+/* Sparkle effect */
+.sparkle {
+  position: absolute;
+  pointer-events: none;
+  animation: sparkleFly 0.8s ease-out forwards;
+  font-size: 16px;
+  z-index: 20;
+}
+@keyframes sparkleFly {
+  0%{transform:translateY(0) scale(0);opacity:1;}
+  100%{transform:translateY(-50px) scale(1.5);opacity:0;}
+}
+
+/* Books shelf */
+.question-area {
+  background: rgba(61,31,10,0.75);
+  border-radius: 16px;
+  padding: 16px 20px;
+  width: 100%; max-width: 680px;
+  backdrop-filter: blur(4px);
+  border: 2px solid rgba(232,160,48,0.3);
+  margin-bottom: 12px;
+}
+.question-label {
+  font-size: 11px; color: rgba(253,246,227,0.6);
+  letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 10px; text-align: center;
+}
+
+/* Book cards for drag */
+.books-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: nowrap;
+  min-height: 130px;
+  align-items: flex-end;
+  padding: 6px 0;
+}
+
+.book-card {
+  width: 100px;
+  min-height: 140px;
+  border-radius: 5px 10px 10px 5px;
+  cursor: grab;
+  position: relative;
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex; flex-direction: column;
+  overflow: visible;
+  flex-shrink: 0;
+}
+.book-card:active { cursor: grabbing; }
+.book-card.dragging {
+  opacity: 0.5;
+  transform: scale(0.96);
+}
+.book-card.drag-over {
+  transform: translateX(6px) scale(1.03);
+}
+
+.book-spine {
+  width: 12px;
+  background: rgba(0,0,0,0.25);
+  position: absolute; left: 0; top: 0; bottom: 0;
+  border-radius: 4px 0 0 4px;
+}
+.book-body {
+  margin-left: 12px;
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: space-between;
+  padding: 10px 6px 8px;
+  border-radius: 0 8px 8px 0;
+}
+.book-title-text {
+  font-size: 9px; color: rgba(255,255,255,0.85);
+  text-align: center; writing-mode: vertical-rl;
+  text-orientation: mixed;
+  height: 60px; overflow: hidden;
+  line-height: 1.2;
+}
+.call-number-badge {
+  background: rgba(0,0,0,0.55);
+  border-radius: 4px;
+  padding: 5px 6px;
+  font-size: 13px; color: #fff;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  line-height: 1.7;
+  text-align: center;
+  width: 100%;
+  white-space: pre-wrap;
+  word-break: break-all;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+
+/* Drop zones */
+.answer-area {
+  background: rgba(253,246,227,0.1);
+  border: 2px dashed rgba(253,246,227,0.3);
+  border-radius: 16px;
+  padding: 12px 20px;
+  width: 100%; max-width: 680px;
+  backdrop-filter: blur(2px);
+}
+.answer-label {
+  font-size: 11px; color: rgba(253,246,227,0.5);
+  letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 8px; text-align: center;
+}
+.slots-container {
+  display: flex; gap: 10px;
+  justify-content: center;
+  min-height: 140px;
+  align-items: flex-end;
+  padding: 6px 0;
+}
+.slot {
+  width: 100px; min-height: 148px;
+  border: 2px dashed rgba(253,246,227,0.25);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+.slot.occupied { border-style: solid; border-color: rgba(232,160,48,0.5); }
+.slot.active-drop { border-color: var(--gold); background: rgba(245,200,66,0.1); }
+.slot-number {
+  position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; color: rgba(253,246,227,0.35);
+  font-weight: 700;
+}
+
+/* Bottom bar */
+.bottom-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 90px;
+  background: rgba(61,31,10,0.9);
+  border-top: 2px solid rgba(232,160,48,0.3);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0;
+  z-index: 10;
+  padding: 0 20px 4px;
+}
+.bottom-bar-main {
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px; width: 100%;
+}
+.credit-tag {
+  font-size: 10px;
+  color: rgba(253,246,227,0.25);
+  letter-spacing: 2px;
+  margin-top: 5px;
+  font-weight: 300;
+  user-select: none;
+}
+/* Opening & Result screen credit */
+.screen-credit {
+  position: absolute;
+  bottom: 14px; left: 0; right: 0;
+  text-align: center;
+  font-size: 10px;
+  color: rgba(253,246,227,0.22);
+  letter-spacing: 2px;
+  font-weight: 300;
+  pointer-events: none;
+  user-select: none;
+  z-index: 5;
+}
+
+.feedback-msg {
+  flex: 1;
+  font-size: 13px;
+  color: rgba(253,246,227,0.8);
+  text-align: left;
+  max-width: 300px;
+}
+.feedback-msg.correct { color: #7eea7e; }
+.feedback-msg.wrong { color: #ff9090; }
+
+.btn-check {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, var(--amber), var(--gold));
+  color: var(--deep-brown);
+  border: none; border-radius: 40px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(232,160,48,0.4);
+  transition: all 0.2s;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.btn-check:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(232,160,48,0.6); }
+.btn-check:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.btn-reset {
+  padding: 12px 20px;
+  background: rgba(253,246,227,0.12);
+  color: var(--cream);
+  border: 1.5px solid rgba(253,246,227,0.3);
+  border-radius: 40px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-reset:hover { background: rgba(253,246,227,0.2); }
+
+/* Hint popup */
+.hint-popup {
+  position: fixed;
+  bottom: 100px; left: 50%;
+  transform: translateX(-50%);
+  background: #fff3cd;
+  border: 2px solid var(--amber);
+  border-radius: 12px;
+  padding: 12px 20px;
+  max-width: 420px; width: 90%;
+  z-index: 50;
+  font-size: 13px; color: var(--deep-brown);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  animation: slideUp 0.3s ease-out;
+}
+.hint-popup.hidden { display: none; }
+.hint-popup h4 { font-size: 13px; margin-bottom: 4px; color: var(--warm-brown); }
+@keyframes slideUp {
+  from{transform:translateX(-50%) translateY(20px);opacity:0;}
+  to{transform:translateX(-50%) translateY(0);opacity:1;}
+}
+
+/* Combo flash */
+.combo-flash {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  font-family: 'Noto Serif KR', serif;
+  font-size: 48px; font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(245,200,66,0.8), 0 4px 10px rgba(0,0,0,0.5);
+  pointer-events: none;
+  z-index: 60;
+  animation: comboFlash 1s ease-out forwards;
+}
+@keyframes comboFlash {
+  0%{transform:translate(-50%,-50%) scale(0.5);opacity:0;}
+  30%{transform:translate(-50%,-50%) scale(1.2);opacity:1;}
+  70%{opacity:1;}
+  100%{transform:translate(-50%,-70%) scale(0.9);opacity:0;}
+}
+
+/* ===== RESULT SCREEN ===== */
+#resultScreen {
+  background: linear-gradient(160deg, #1a0a00 0%, #3d1f0a 60%, #5a3010 100%);
+}
+
+.result-content {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.result-badge {
+  font-size: 72px;
+  animation: badgeBounce 0.6s ease-out;
+}
+@keyframes badgeBounce {
+  0%{transform:scale(0);}
+  60%{transform:scale(1.2);}
+  100%{transform:scale(1);}
+}
+
+.result-rank {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 28px; font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(245,200,66,0.5);
+}
+
+.result-score {
+  font-size: 16px; color: rgba(253,246,227,0.8);
+}
+.result-score span { color: var(--gold); font-size: 22px; font-weight: 700; }
+
+.result-msg {
+  font-size: 14px; color: rgba(253,246,227,0.65);
+  line-height: 1.8; max-width: 360px;
+}
+
+.result-squirrel {
+  width: 140px; height: 140px;
+}
+
+.result-buttons {
+  display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 10px;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar-wrap {
+  position: absolute; top: 66px; left: 16px; right: 16px;
+  height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;
+  z-index: 10;
+}
+.progress-bar-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--amber), var(--gold));
+  transition: width 1s linear;
+}
+</style>
+</head>
+<body>
+
+<!-- ===== OPENING SCREEN ===== -->
+<div id="openingScreen" class="screen">
+  <div class="library-bg"></div>
+  <div class="floating-books">
+    <div class="fb"></div><div class="fb"></div><div class="fb"></div>
+    <div class="fb"></div><div class="fb"></div><div class="fb"></div>
+    <div class="fb"></div><div class="fb"></div><div class="fb"></div>
+  </div>
+  <div class="opening-scene">
+    <div class="squirrel-scene">
+      <!-- SVG illustration: squirrel dreaming about certificate -->
+      <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" width="320" height="260">
+        <!-- Library shelf backdrop -->
+        <rect x="0" y="190" width="320" height="70" fill="#5a3010" rx="4"/>
+        <rect x="0" y="185" width="320" height="10" fill="#7c4a1e"/>
+        <!-- Books on shelf -->
+        <rect x="20" y="130" width="22" height="60" fill="#c0392b" rx="2"/>
+        <rect x="42" y="140" width="18" height="50" fill="#2980b9" rx="2"/>
+        <rect x="60" y="125" width="25" height="65" fill="#27ae60" rx="2"/>
+        <rect x="85" y="135" width="20" height="55" fill="#8e44ad" rx="2"/>
+        <rect x="105" y="128" width="22" height="62" fill="#d35400" rx="2"/>
+        <!-- Squirrel body -->
+        <ellipse cx="200" cy="190" rx="32" ry="28" fill="#c8813a"/>
+        <!-- Squirrel head -->
+        <circle cx="200" cy="150" r="28" fill="#d4914a"/>
+        <!-- Ears -->
+        <ellipse cx="180" cy="128" rx="10" ry="13" fill="#c8813a"/>
+        <ellipse cx="180" cy="128" rx="6" ry="8" fill="#f0b07a"/>
+        <ellipse cx="220" cy="128" rx="10" ry="13" fill="#c8813a"/>
+        <ellipse cx="220" cy="128" rx="6" ry="8" fill="#f0b07a"/>
+        <!-- Face -->
+        <ellipse cx="193" cy="155" rx="5" ry="6" fill="#3d1f0a"/>
+        <ellipse cx="207" cy="155" rx="5" ry="6" fill="#3d1f0a"/>
+        <!-- Stars in eyes (dreaming) -->
+        <text x="190" y="159" font-size="8" fill="#ffd700" text-anchor="middle">★</text>
+        <text x="210" y="159" font-size="8" fill="#ffd700" text-anchor="middle">★</text>
+        <!-- Nose -->
+        <ellipse cx="200" cy="165" rx="4" ry="3" fill="#b05a20"/>
+        <!-- Smile -->
+        <path d="M192 170 Q200 177 208 170" stroke="#7c3a10" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Tail -->
+        <path d="M232 200 Q280 170 270 130 Q260 100 240 120" stroke="#c8813a" stroke-width="18" fill="none" stroke-linecap="round"/>
+        <path d="M232 200 Q278 172 268 132 Q258 102 238 122" stroke="#e8a870" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <!-- Arms -->
+        <ellipse cx="175" cy="185" rx="10" ry="16" fill="#c8813a" transform="rotate(20,175,185)"/>
+        <ellipse cx="225" cy="183" rx="10" ry="16" fill="#c8813a" transform="rotate(-15,225,183)"/>
+        <!-- Dream bubble chain -->
+        <circle cx="245" cy="120" r="5" fill="rgba(255,255,255,0.3)"/>
+        <circle cx="258" cy="108" r="7" fill="rgba(255,255,255,0.25)"/>
+        <circle cx="272" cy="93" r="9" fill="rgba(255,255,255,0.2)"/>
+        <!-- Dream bubble big -->
+        <ellipse cx="280" cy="62" rx="35" ry="28" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+        <!-- Certificate inside dream -->
+        <rect x="257" y="44" width="46" height="36" fill="rgba(245,200,66,0.8)" rx="4"/>
+        <rect x="260" y="47" width="40" height="30" fill="rgba(255,255,255,0.9)" rx="3"/>
+        <text x="280" y="57" font-size="7" fill="#7c4a1e" text-anchor="middle" font-weight="bold">최고의</text>
+        <text x="280" y="66" font-size="7" fill="#7c4a1e" text-anchor="middle" font-weight="bold">도서부</text>
+        <text x="280" y="75" font-size="10" fill="#e8a030" text-anchor="middle">🏆</text>
+        <!-- Fist (fighting spirit) -->
+        <ellipse cx="170" cy="210" rx="12" ry="10" fill="#d4914a"/>
+        <text x="250" y="225" font-size="11" fill="rgba(245,200,66,0.8)" text-anchor="middle" font-weight="bold">파이팅!</text>
+      </svg>
+    </div>
+    <div class="opening-title">📚 책은 제자리에</div>
+    <div class="opening-subtitle">서가뜰 도서관 · 도서부 빛글</div>
+    <div class="opening-buttons">
+      <button class="btn-secondary" onclick="showGuide()">📖 게임설명</button>
+      <button class="btn-primary" onclick="startGame()">🚀 게임시작</button>
+    </div>
+  </div>
+  <div class="screen-credit">사서교사 이미혜 제작</div>
+</div>
+
+<!-- ===== GUIDE MODAL ===== -->
+<div id="guideModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <button class="close-btn" onclick="hideGuide()">✕</button>
+    <h2>📖 게임 설명</h2>
+    <div class="guide-section">
+      <h3>청구기호란?</h3>
+      <p>청구기호는 도서관에서 책의 위치를 나타내는 고유 번호입니다. 아래와 같이 구성됩니다:</p>
+      <div class="call-no-example">813.6
+박73ㅅ
+v.2 c.1</div>
+      <ul>
+        <li><b>분류기호</b>: 주제별 숫자 (예: 813.6 = 한국 소설)</li>
+        <li><b>저자기호</b>: 성씨 + 숫자 + 저작기호 (예: 박73ㅅ)</li>
+        <li><b>권차기호</b>: v.1, v.2… (선택)</li>
+        <li><b>복본기호</b>: c.1, c.2… (선택)</li>
+      </ul>
+    </div>
+    <div class="guide-section">
+      <h3>정렬 순서</h3>
+      <ul>
+        <li>① 분류기호 숫자 순 (813.1 → 813.6 → 814.2)</li>
+        <li>② 저자기호 성씨 가나다순 (강→김→박→이)</li>
+        <li>③ 저자기호 숫자 크기순 (73 → 102)</li>
+        <li>④ 저작기호 가나다순 (ㄱ→ㄴ→ㄷ…ㄲ→ㄸ…)</li>
+        <li>⑤ 권차·복본 숫자순 (v.1 → v.2)</li>
+      </ul>
+    </div>
+    <div class="guide-section">
+      <h3>자격증 단계</h3>
+      <ul>
+        <li>🌱 신규 도서부 (0~4문제)</li>
+        <li>📗 정식 도서부 (5~9문제)</li>
+        <li>🔥 열정적 도서부 (10~14문제)</li>
+        <li>🏆 최고의 도서부 (15문제 이상)</li>
+      </ul>
+    </div>
+    <div class="guide-section">
+      <h3>조작 방법</h3>
+      <ul>
+        <li>📦 책을 마우스로 드래그하여 순서를 바꿔보세요</li>
+        <li>✅ 배열 완료 버튼을 눌러 정답을 확인하세요</li>
+        <li>⚡ 3연속 정답 시 부스터! 시간 +3초 추가</li>
+        <li>❓ 같은 문제에서 2회 틀리면 힌트가 제공됩니다</li>
+      </ul>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="hideGuide()">확인!</button>
+  </div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div id="gameScreen" class="screen hidden">
+  <div class="shelf-bg">
+    <div class="shelf-line"></div>
+    <div class="shelf-line"></div>
+    <div class="shelf-line"></div>
+  </div>
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-left">
+      <div class="badge-display">
+        <div class="badge-icon" id="badgeIcon">🌱</div>
+        <div class="badge-info">
+          <div class="badge-label">현재 자격증</div>
+          <div class="badge-name" id="badgeName">신규 도서부</div>
+        </div>
+      </div>
+      <div class="score-display">점수 <span id="scoreVal">0</span></div>
+    </div>
+    <div class="hud-right">
+      <div class="timer-display">
+        <div class="timer-icon">⏱</div>
+        <div class="timer-value" id="timerVal">1:30</div>
+      </div>
+      <div class="combo-display hidden" id="comboDisplay">🔥 0 COMBO</div>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressBar" style="width:100%"></div>
+  </div>
+
+  <!-- Game area -->
+  <div class="game-area">
+    <!-- Question books -->
+    <div class="question-area">
+      <div class="question-label">📚 아래 책들을 올바른 순서로 배열하세요</div>
+      <div class="books-container" id="booksContainer"></div>
+    </div>
+    <!-- Answer slots -->
+    <div class="answer-area">
+      <div class="answer-label">① → ② → ③ → ④ 순서로 배치</div>
+      <div class="slots-container" id="slotsContainer">
+        <div class="slot" id="slot-0" data-slot="0"><div class="slot-number">①</div></div>
+        <div class="slot" id="slot-1" data-slot="1"><div class="slot-number">②</div></div>
+        <div class="slot" id="slot-2" data-slot="2"><div class="slot-number">③</div></div>
+        <div class="slot" id="slot-3" data-slot="3"><div class="slot-number">④</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bottom-bar">
+    <div class="bottom-bar-main">
+      <div class="feedback-msg" id="feedbackMsg">책을 드래그하여 순서를 정해보세요!</div>
+      <button class="btn-reset" onclick="resetArrangement()">↺ 다시 놓기</button>
+      <button class="btn-check" id="checkBtn" onclick="checkAnswer()">✅ 배열 완료</button>
+    </div>
+    <div class="credit-tag">사서교사 이미혜 제작</div>
+  </div>
+
+  <!-- Squirrel character -->
+  <div class="squirrel-char" id="squirrelChar" style="left:20px">
+    <!-- Squirrel idle SVG -->
+    <svg id="squirrelSvg" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg" width="70" height="70"></svg>
+  </div>
+
+  <!-- Hint popup -->
+  <div class="hint-popup hidden" id="hintPopup">
+    <h4>💡 힌트</h4>
+    <p id="hintText"></p>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="resultScreen" class="screen hidden">
+  <div class="library-bg"></div>
+  <div class="result-content">
+    <div class="result-badge" id="resultBadge">🌱</div>
+    <svg id="resultSquirrel" class="result-squirrel" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="result-rank" id="resultRank">신규 도서부</div>
+    <div class="result-score">총 <span id="resultScore">0</span>문제 정답!</div>
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="result-buttons">
+      <button class="btn-secondary" onclick="goHome()">🏠 처음으로</button>
+      <button class="btn-primary" onclick="startGame()">🔄 다시 도전!</button>
+    </div>
+  </div>
+  <div class="screen-credit">사서교사 이미혜 제작</div>
+</div>
+
+<script>
+// ======================================================
+// DATA & CONSTANTS
+// ======================================================
+const SURNAMES = ['강','고','김','나','남','노','문','박','배','서','성','손','신','안','양','오','우','유','윤','이','임','장','전','정','조','진','최','하','한','홍'];
+const CHOSUNGS = ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ','ㄲ','ㄸ','ㅃ','ㅆ','ㅉ'];
+const BOOK_COLORS = ['#c0392b','#2980b9','#27ae60','#8e44ad','#d35400','#16a085','#c07829','#2c3e50','#7f2d61','#1a5276'];
+
+// 분류기호 백의 자리에 따른 색상 매핑
+const CLASS_COLORS = {
+  0: '#27ae60',   // 000번대 — 초록
+  1: '#e74c3c',   // 100번대 — 빨강
+  2: '#7f8c8d',   // 200번대 — 회색
+  3: '#e67e22',   // 300번대 — 주황
+  4: '#7d4e1e',   // 400번대 — 갈색
+  5: '#1a3a6b',   // 500번대 — 남색
+  6: '#d4ac0d',   // 600번대 — 노랑
+  7: '#5dade2',   // 700번대 — 연두 (하늘빛 연두)
+  8: '#2471a3',   // 800번대 — 파랑
+  9: '#7d3c98',   // 900번대 — 보라
+};
+
+function getBookColor(classNo) {
+  const hundreds = Math.floor(parseFloat(classNo) / 100);
+  return CLASS_COLORS[hundreds] || '#5d6d7e';
+}
+const BOOK_TITLES = [
+  '봄날의 고양이','하늘을 나는 꿈','별빛 도서관','미래를 향해','숲속의 비밀','바다의 노래','시간의 문','따뜻한 하루',
+  '달빛 아래서','작은 영웅','신비한 나라','여름 이야기','겨울 왕국','봄 소풍','가을 단풍','빨간 망토','파란 하늘',
+  '황금 열쇠','은빛 강','초록 숲','무지개 다리','하얀 구름','검은 고양이','행복한 마을','신나는 모험'
+];
+
+const TOTAL_TIME = 90; // 1분 30초
+let gameState = {
+  score: 0,
+  combo: 0,
+  wrongCount: 0,
+  timeLeft: TOTAL_TIME,
+  timerInterval: null,
+  currentBooks: [],
+  slotBooks: [null, null, null, null],
+  squirrelState: 'idle',
+  squirrelPos: 20,
+  boosterActive: false,
+  currentDragId: null
+};
+
+// ======================================================
+// UTILITY
+// ======================================================
+function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function generateCallNumber(difficulty) {
+  let classNo;
+  if (difficulty <= 4) {
+    // 백의 자리가 다른 4개 → 분류번호 앞자리 다름
+    classNo = (rand(1, 9) * 100 + rand(0, 99) + rand(0, 9) * 0.1 + rand(0, 9) * 0.01).toFixed(2);
+  } else if (difficulty <= 9) {
+    classNo = (800 + rand(0, 99) + rand(0, 9) * 0.1 + rand(0, 9) * 0.01).toFixed(2);
+  } else {
+    classNo = (813 + rand(0, 9) * 0.1 + rand(0, 9) * 0.01).toFixed(2);
+  }
+  const surname = pick(SURNAMES);
+  const num = rand(10, 199);
+  const chosung = pick(CHOSUNGS);
+  const author = `${surname}${num}${chosung}`;
+  let vol = null, copy = null;
+  if (difficulty >= 5 && Math.random() < 0.4) vol = `v.${rand(1,4)}`;
+  if (difficulty >= 8 && Math.random() < 0.3) copy = `c.${rand(1,3)}`;
+  return { classNo, author, vol, copy, surname, num, chosung };
+}
+
+function generateSet(difficulty) {
+  let books = [];
+  if (difficulty <= 4) {
+    // 분류번호 백의 자리 다르게
+    const hundreds = [1,2,3,4,5,6,7,8,9];
+    const chosen = [];
+    while (chosen.length < 4) {
+      const h = pick(hundreds);
+      if (!chosen.includes(h)) chosen.push(h);
+    }
+    books = chosen.map(h => {
+      const classNo = (h * 100 + rand(0,99) + rand(0,9)*0.1 + rand(0,9)*0.01).toFixed(2);
+      const surname = pick(SURNAMES);
+      const num = rand(10,199);
+      const chosung = pick(CHOSUNGS);
+      return { classNo, author: `${surname}${num}${chosung}`, vol: null, copy: null, surname, num, chosung };
+    });
+  } else if (difficulty <= 9) {
+    // 분류번호 동일 2권 이상 포함
+    const baseClass = (800 + rand(0,9)*10 + rand(0,9) + rand(0,9)*0.1 + rand(0,9)*0.01).toFixed(2);
+    const a1 = makeAuthorObj(); books.push({ classNo: baseClass, vol: null, copy: null, ...a1 });
+    const a2 = makeAuthorObj(); books.push({ classNo: baseClass, vol: null, copy: null, ...a2 });
+    for (let i = 0; i < 2; i++) {
+      const cn = (800 + rand(0,99) + rand(0,9)*0.1 + rand(0,9)*0.01).toFixed(2);
+      const a = makeAuthorObj(); books.push({ classNo: cn, vol: null, copy: null, ...a });
+    }
+  } else {
+    // 저자기호까지 동일하고 권차/복본만 다른 심화 포함
+    const baseClass = '813.' + rand(10,99);
+    const baseSurname = pick(SURNAMES);
+    const baseNum = rand(10,99);
+    const baseChosung = pick(CHOSUNGS);
+    const baseAuthor = `${baseSurname}${baseNum}${baseChosung}`;
+    books.push({ classNo: baseClass, author: baseAuthor, vol: 'v.1', copy: 'c.1', surname: baseSurname, num: baseNum, chosung: baseChosung });
+    books.push({ classNo: baseClass, author: baseAuthor, vol: 'v.1', copy: 'c.2', surname: baseSurname, num: baseNum, chosung: baseChosung });
+    books.push({ classNo: baseClass, author: baseAuthor, vol: 'v.2', copy: null, surname: baseSurname, num: baseNum, chosung: baseChosung });
+    const cn = (814 + rand(0,9)*0.1 + rand(0,9)*0.01).toFixed(2);
+    const a = makeAuthorObj(); books.push({ classNo: cn, vol: null, copy: null, ...a });
+  }
+  // Shuffle
+  books = books.sort(() => Math.random() - 0.5);
+  books.forEach((b, i) => {
+    b.id = i;
+    b.color = getBookColor(b.classNo);
+    b.title = pick(BOOK_TITLES);
+  });
+  return books;
+}
+
+function makeAuthorObj() {
+  const surname = pick(SURNAMES);
+  const num = rand(10, 199);
+  const chosung = pick(CHOSUNGS);
+  const author = `${surname}${num}${chosung}`;
+  return { author, surname, num, chosung };
+}
+function makeAuthor() {
+  const s = pick(SURNAMES); const n = rand(10,199); const c = pick(CHOSUNGS);
+  return `${s}${n}${c}`;
+}
+function parseAuthor(a) {
+  const match = a.match(/^(.)(\d+)(.+)$/);
+  if (!match) return { surname: a[0], num: 0, chosung: 'ㄱ' };
+  return { surname: match[1], num: parseInt(match[2]), chosung: match[3] };
+}
+
+// ======================================================
+// SORTING LOGIC (Library order)
+// ======================================================
+function chosung_order(c) {
+  const order = ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ','ㄲ','ㄸ','ㅃ','ㅆ','ㅉ'];
+  const i = order.indexOf(c);
+  return i === -1 ? 99 : i;
+}
+
+function surname_order(s) {
+  return s.localeCompare('가', 'ko', { sensitivity: 'base' });
+}
+
+function compareBooks(a, b) {
+  // 1. 분류기호 숫자 비교
+  const ca = parseFloat(a.classNo), cb = parseFloat(b.classNo);
+  if (ca !== cb) return ca - cb;
+  // 2. 성씨 가나다순
+  const sc = a.surname.localeCompare(b.surname, 'ko', { sensitivity: 'base' });
+  if (sc !== 0) return sc;
+  // 3. 숫자
+  if (a.num !== b.num) return a.num - b.num;
+  // 4. 초성
+  const co = chosung_order(a.chosung) - chosung_order(b.chosung);
+  if (co !== 0) return co;
+  // 5. 권차
+  const va = a.vol ? parseInt(a.vol.replace('v.','')) : 0;
+  const vb = b.vol ? parseInt(b.vol.replace('v.','')) : 0;
+  if (va !== vb) return va - vb;
+  // 6. 복본
+  const cpa = a.copy ? parseInt(a.copy.replace('c.','')) : 0;
+  const cpb = b.copy ? parseInt(b.copy.replace('c.','')) : 0;
+  return cpa - cpb;
+}
+
+function getSortedOrder(books) {
+  return [...books].sort(compareBooks).map(b => b.id);
+}
+
+// ======================================================
+// RENDER
+// ======================================================
+function callNoDisplay(book) {
+  let lines = [book.classNo, book.author];
+  if (book.vol) lines.push(book.vol);
+  if (book.copy) lines.push(book.copy);
+  return lines.join('\n');
+}
+
+function renderBook(book, inSlot = false) {
+  const div = document.createElement('div');
+  div.className = 'book-card';
+  div.dataset.bookId = book.id;
+  div.style.background = `linear-gradient(135deg, ${book.color}, ${lightenColor(book.color, 30)})`;
+  div.style.boxShadow = `3px 3px 12px rgba(0,0,0,0.4), inset -2px 0 4px rgba(0,0,0,0.2)`;
+  div.innerHTML = `
+    <div class="book-spine"></div>
+    <div class="book-body">
+      <div class="book-title-text">${book.title}</div>
+      <div class="call-number-badge">${callNoDisplay(book)}</div>
+    </div>
+  `;
+  // Drag events
+  div.draggable = true;
+  div.addEventListener('dragstart', onDragStart);
+  div.addEventListener('dragend', onDragEnd);
+  return div;
+}
+
+function lightenColor(hex, amount) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${Math.min(255,r+amount)},${Math.min(255,g+amount)},${Math.min(255,b+amount)},1)`;
+}
+
+function renderSquirrel(state) {
+  const svg = document.getElementById('squirrelSvg');
+  if (state === 'happy') {
+    svg.innerHTML = `
+      <circle cx="35" cy="30" r="20" fill="#d4914a"/>
+      <ellipse cx="22" cy="14" rx="7" ry="9" fill="#c8813a"/>
+      <ellipse cx="22" cy="14" rx="4" ry="6" fill="#f0b07a"/>
+      <ellipse cx="48" cy="14" rx="7" ry="9" fill="#c8813a"/>
+      <ellipse cx="48" cy="14" rx="4" ry="6" fill="#f0b07a"/>
+      <text x="28" y="32" font-size="7" fill="#ffd700" text-anchor="middle">★</text>
+      <text x="42" y="32" font-size="7" fill="#ffd700" text-anchor="middle">★</text>
+      <ellipse cx="35" cy="38" rx="3" ry="2" fill="#b05a20"/>
+      <path d="M28 43 Q35 50 42 43" stroke="#7c3a10" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="35" cy="58" rx="22" ry="18" fill="#c8813a"/>
+      <path d="M55 55 Q70 40 65 25 Q60 15 50 20" stroke="#c8813a" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <text x="35" y="20" font-size="12" text-anchor="middle">🎉</text>
+    `;
+  } else if (state === 'sad') {
+    svg.innerHTML = `
+      <circle cx="35" cy="30" r="20" fill="#d4914a"/>
+      <ellipse cx="22" cy="14" rx="7" ry="9" fill="#c8813a"/>
+      <ellipse cx="48" cy="14" rx="7" ry="9" fill="#c8813a"/>
+      <ellipse cx="28" cy="30" rx="4" ry="3" fill="#3d1f0a"/>
+      <ellipse cx="42" cy="30" rx="4" ry="3" fill="#3d1f0a"/>
+      <ellipse cx="35" cy="38" rx="3" ry="2" fill="#b05a20"/>
+      <path d="M28 46 Q35 40 42 46" stroke="#7c3a10" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="35" cy="58" rx="22" ry="18" fill="#c8813a"/>
+      <path d="M55 55 Q65 45 60 30 Q55 20 48 25" stroke="#c8813a" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <text x="50" y="18" font-size="10" text-anchor="middle">😢</text>
+    `;
+  } else {
+    // idle
+    svg.innerHTML = `
+      <circle cx="35" cy="30" r="20" fill="#d4914a"/>
+      <ellipse cx="22" cy="14" rx="7" ry="9" fill="#c8813a"/>
+      <ellipse cx="22" cy="14" rx="4" ry="6" fill="#f0b07a"/>
+      <ellipse cx="48" cy="14" rx="7" ry="9" fill="#c8813a"/>
+      <ellipse cx="48" cy="14" rx="4" ry="6" fill="#f0b07a"/>
+      <ellipse cx="28" cy="30" rx="4" ry="5" fill="#3d1f0a"/>
+      <ellipse cx="42" cy="30" rx="4" ry="5" fill="#3d1f0a"/>
+      <circle cx="29" cy="28" r="1.5" fill="white"/>
+      <circle cx="43" cy="28" r="1.5" fill="white"/>
+      <ellipse cx="35" cy="38" rx="3" ry="2" fill="#b05a20"/>
+      <path d="M28 43 Q35 49 42 43" stroke="#7c3a10" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="35" cy="58" rx="22" ry="18" fill="#c8813a"/>
+      <path d="M55 55 Q68 42 63 27 Q58 15 50 22" stroke="#c8813a" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <path d="M55 55 Q67 43 62 28 Q57 16 50 23" stroke="#e8a870" stroke-width="5" fill="none" stroke-linecap="round"/>
+    `;
+  }
+}
+
+function renderResultSquirrel(state) {
+  const svg = document.getElementById('resultSquirrel');
+  if (state === 'happy') {
+    svg.innerHTML = `
+      <circle cx="70" cy="55" r="35" fill="#d4914a"/>
+      <ellipse cx="47" cy="26" rx="12" ry="16" fill="#c8813a"/>
+      <ellipse cx="47" cy="26" rx="7" ry="10" fill="#f0b07a"/>
+      <ellipse cx="93" cy="26" rx="12" ry="16" fill="#c8813a"/>
+      <ellipse cx="93" cy="26" rx="7" ry="10" fill="#f0b07a"/>
+      <text x="58" y="58" font-size="13" fill="#ffd700" text-anchor="middle">★</text>
+      <text x="82" y="58" font-size="13" fill="#ffd700" text-anchor="middle">★</text>
+      <ellipse cx="70" cy="70" rx="5" ry="4" fill="#b05a20"/>
+      <path d="M58 80 Q70 92 82 80" stroke="#7c3a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="70" cy="108" rx="35" ry="26" fill="#c8813a"/>
+      <path d="M103 100 Q125 80 118 55 Q112 35 96 42" stroke="#c8813a" stroke-width="18" fill="none" stroke-linecap="round"/>
+      <text x="70" y="35" font-size="22" text-anchor="middle">🎊</text>
+    `;
+  } else {
+    svg.innerHTML = `
+      <circle cx="70" cy="55" r="35" fill="#d4914a"/>
+      <ellipse cx="47" cy="26" rx="12" ry="16" fill="#c8813a"/>
+      <ellipse cx="93" cy="26" rx="12" ry="16" fill="#c8813a"/>
+      <ellipse cx="58" cy="55" rx="7" ry="6" fill="#3d1f0a"/>
+      <ellipse cx="82" cy="55" rx="7" ry="6" fill="#3d1f0a"/>
+      <ellipse cx="70" cy="70" rx="5" ry="4" fill="#b05a20"/>
+      <path d="M58 80 Q70 72 82 80" stroke="#7c3a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="70" cy="108" rx="35" ry="26" fill="#c8813a"/>
+      <path d="M103 100 Q122 82 116 57 Q110 37 95 44" stroke="#c8813a" stroke-width="18" fill="none" stroke-linecap="round"/>
+      <text x="70" y="35" font-size="22" text-anchor="middle">😢</text>
+    `;
+  }
+}
+
+// ======================================================
+// BADGE
+// ======================================================
+function getBadge(score) {
+  if (score >= 15) return { icon: '🏆', name: '최고의 도서부', level: 'master' };
+  if (score >= 10) return { icon: '🔥', name: '열정적 도서부', level: 'expert' };
+  if (score >= 5)  return { icon: '📗', name: '정식 도서부', level: 'skilled' };
+  return { icon: '🌱', name: '신규 도서부', level: 'novice' };
+}
+
+function updateBadgeDisplay() {
+  const badge = getBadge(gameState.score);
+  document.getElementById('badgeIcon').textContent = badge.icon;
+  document.getElementById('badgeName').textContent = badge.name;
+  document.getElementById('scoreVal').textContent = gameState.score;
+}
+
+// ======================================================
+// DRAG & DROP
+// ======================================================
+let dragSrcId = null;
+let dragFromSlot = null; // slot index or null (from pool)
+
+function onDragStart(e) {
+  const card = e.currentTarget;
+  dragSrcId = parseInt(card.dataset.bookId);
+  dragFromSlot = card.closest('.slot') ? parseInt(card.closest('.slot').dataset.slot) : null;
+  card.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragSrcId);
+}
+
+function onDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.slot').forEach(s => s.classList.remove('active-drop'));
+}
+
+function setupDropZones() {
+  // Pool drag-over (sortable within pool)
+  const pool = document.getElementById('booksContainer');
+  pool.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const afterEl = getDragAfterElement(pool, e.clientX);
+    const dragging = pool.querySelector('.dragging');
+    if (dragging) {
+      if (!afterEl) pool.appendChild(dragging);
+      else pool.insertBefore(dragging, afterEl);
+    }
+  });
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    // If dropped book came from a slot, return it to pool
+    if (dragFromSlot !== null) {
+      const slot = document.getElementById(`slot-${dragFromSlot}`);
+      const bookInSlot = slot.querySelector('.book-card');
+      if (bookInSlot) {
+        slot.innerHTML = `<div class="slot-number">${['①','②','③','④'][dragFromSlot]}</div>`;
+        slot.classList.remove('occupied');
+        pool.appendChild(bookInSlot);
+        gameState.slotBooks[dragFromSlot] = null;
+      }
+    }
+    dragSrcId = null; dragFromSlot = null;
+  });
+
+  // Slot drop zones
+  document.querySelectorAll('.slot').forEach(slot => {
+    slot.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      slot.classList.add('active-drop');
+    });
+    slot.addEventListener('dragleave', () => slot.classList.remove('active-drop'));
+    slot.addEventListener('drop', e => {
+      e.preventDefault();
+      slot.classList.remove('active-drop');
+      const slotIdx = parseInt(slot.dataset.slot);
+
+      // If slot already has a book, swap with pool or source slot
+      const existingCard = slot.querySelector('.book-card');
+      const existingBookId = existingCard ? parseInt(existingCard.dataset.bookId) : null;
+
+      // Place dropped book into slot
+      if (dragSrcId !== null) {
+        // Find book card from its current location
+        const srcCard = document.querySelector(`[data-book-id="${dragSrcId}"]`);
+        if (!srcCard) return;
+
+        // If there's already a book here, send it back to pool (or source)
+        if (existingCard && existingCard !== srcCard) {
+          if (dragFromSlot !== null) {
+            // Swap
+            const srcSlot = document.getElementById(`slot-${dragFromSlot}`);
+            srcSlot.innerHTML = `<div class="slot-number">${['①','②','③','④'][dragFromSlot]}</div>`;
+            srcSlot.appendChild(existingCard);
+            srcSlot.classList.add('occupied');
+            gameState.slotBooks[dragFromSlot] = existingBookId;
+          } else {
+            document.getElementById('booksContainer').appendChild(existingCard);
+          }
+        }
+
+        slot.innerHTML = `<div class="slot-number">${['①','②','③','④'][slotIdx]}</div>`;
+        slot.appendChild(srcCard);
+        slot.classList.add('occupied');
+        gameState.slotBooks[slotIdx] = dragSrcId;
+
+        // Clear old slot if came from slot
+        if (dragFromSlot !== null && dragFromSlot !== slotIdx) {
+          gameState.slotBooks[dragFromSlot] = existingBookId; // already handled above
+        }
+      }
+      dragSrcId = null; dragFromSlot = null;
+    });
+  });
+}
+
+function getDragAfterElement(container, x) {
+  const draggableElements = [...container.querySelectorAll('.book-card:not(.dragging)')];
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = x - box.left - box.width / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: child };
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+// ======================================================
+// GAME LOGIC
+// ======================================================
+function newQuestion() {
+  const difficulty = gameState.score;
+  gameState.currentBooks = generateSet(difficulty);
+  gameState.slotBooks = [null, null, null, null];
+  gameState.wrongCount = 0;
+  hideHint();
+
+  // Render pool
+  const pool = document.getElementById('booksContainer');
+  pool.innerHTML = '';
+  gameState.currentBooks.forEach(book => {
+    pool.appendChild(renderBook(book));
+  });
+
+  // Reset slots
+  ['①','②','③','④'].forEach((label, i) => {
+    const slot = document.getElementById(`slot-${i}`);
+    slot.innerHTML = `<div class="slot-number">${label}</div>`;
+    slot.classList.remove('occupied', 'active-drop');
+  });
+
+  setFeedback('책을 드래그해서 청구기호 순서대로 놓아보세요!', '');
+  setupDropZones();
+}
+
+function checkAnswer() {
+  // Validate all slots filled
+  if (gameState.slotBooks.some(b => b === null)) {
+    setFeedback('⚠️ 4권의 책을 모두 슬롯에 놓아주세요!', 'wrong');
+    return;
+  }
+
+  const correctOrder = getSortedOrder(gameState.currentBooks);
+  const userOrder = gameState.slotBooks;
+
+  const isCorrect = correctOrder.every((id, i) => id === userOrder[i]);
+
+  if (isCorrect) {
+    gameState.score++;
+    gameState.combo++;
+    gameState.wrongCount = 0;
+    updateBadgeDisplay();
+    setFeedback(`✅ 정답! 훌륭해요! (${gameState.score}점)`, 'correct');
+    setSquirrelState('happy');
+    hideHint();
+
+    // Combo effect
+    if (gameState.combo >= 3) {
+      showComboFlash(`${gameState.combo} COMBO!`);
+      showSparkles();
+      // Booster: +3초
+      gameState.timeLeft = Math.min(TOTAL_TIME, gameState.timeLeft + 3);
+      setFeedback(`✅ 정답! ⚡ COMBO ${gameState.combo}! 시간 +3초!`, 'correct');
+    } else if (gameState.combo >= 2) {
+      showComboFlash(`${gameState.combo} COMBO!`);
+    }
+    updateComboDisplay();
+
+    // Move squirrel
+    const newPos = Math.min(window.innerWidth - 100, gameState.squirrelPos + 60);
+    gameState.squirrelPos = newPos;
+    document.getElementById('squirrelChar').style.left = newPos + 'px';
+
+    setTimeout(() => {
+      setSquirrelState('idle');
+      newQuestion();
+    }, 900);
+  } else {
+    gameState.wrongCount++;
+    gameState.combo = 0;
+    updateComboDisplay();
+    setSquirrelState('sad');
+    setFeedback(`❌ 다시 생각해보세요! (${gameState.wrongCount}회 오답)`, 'wrong');
+
+    if (gameState.wrongCount >= 2) {
+      showHint(correctOrder, userOrder);
+    }
+
+    setTimeout(() => setSquirrelState('idle'), 1200);
+  }
+}
+
+function showHint(correctOrder, userOrder) {
+  // Find first mismatch
+  let hintText = '';
+  for (let i = 0; i < 4; i++) {
+    if (correctOrder[i] !== userOrder[i]) {
+      const correctBook = gameState.currentBooks.find(b => b.id === correctOrder[i]);
+      const userBook = gameState.currentBooks.find(b => b.id === userOrder[i]);
+      if (correctBook && userBook) {
+        if (parseFloat(correctBook.classNo) !== parseFloat(userBook.classNo)) {
+          hintText = `분류기호 ${userBook.classNo}은(는) ${correctBook.classNo}보다 뒤에 있어야 해요!`;
+        } else if (correctBook.surname !== userBook.surname) {
+          hintText = `저자 성씨 '${userBook.surname}'은(는) '${correctBook.surname}'보다 뒤에 와야 해요! (가나다순)`;
+        } else if (correctBook.num !== userBook.num) {
+          hintText = `저자기호 숫자 ${userBook.num}과 ${correctBook.num}의 순서를 확인해보세요! (숫자가 작은 것이 앞)`;
+        } else {
+          hintText = `저작기호(초성) '${userBook.chosung}'과 '${correctBook.chosung}'의 순서를 확인해보세요!`;
+        }
+      }
+      break;
+    }
+  }
+  if (!hintText) hintText = '청구기호 순서를 다시 꼼꼼히 살펴보세요!';
+  document.getElementById('hintText').textContent = hintText;
+  document.getElementById('hintPopup').classList.remove('hidden');
+}
+
+function hideHint() { document.getElementById('hintPopup').classList.add('hidden'); }
+
+function setFeedback(msg, cls) {
+  const el = document.getElementById('feedbackMsg');
+  el.textContent = msg;
+  el.className = 'feedback-msg' + (cls ? ` ${cls}` : '');
+}
+
+function setSquirrelState(state) {
+  gameState.squirrelState = state;
+  const el = document.getElementById('squirrelChar');
+  el.className = 'squirrel-char' + (gameState.boosterActive ? ' fast' : '') + (state !== 'idle' ? ` ${state}` : '');
+  renderSquirrel(state);
+}
+
+function updateComboDisplay() {
+  const el = document.getElementById('comboDisplay');
+  if (gameState.combo >= 2) {
+    el.textContent = `🔥 ${gameState.combo} COMBO`;
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+function showComboFlash(text) {
+  const el = document.createElement('div');
+  el.className = 'combo-flash';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1000);
+}
+
+function showSparkles() {
+  const sq = document.getElementById('squirrelChar');
+  const rect = sq.getBoundingClientRect();
+  for (let i = 0; i < 6; i++) {
+    setTimeout(() => {
+      const spark = document.createElement('div');
+      spark.className = 'sparkle';
+      spark.textContent = ['✨','⭐','💫','🌟'][Math.floor(Math.random()*4)];
+      spark.style.left = (rect.left + Math.random()*70) + 'px';
+      spark.style.top = (rect.top + Math.random()*70) + 'px';
+      document.body.appendChild(spark);
+      setTimeout(() => spark.remove(), 800);
+    }, i * 100);
+  }
+}
+
+function resetArrangement() {
+  const pool = document.getElementById('booksContainer');
+  document.querySelectorAll('.slot').forEach((slot, i) => {
+    const card = slot.querySelector('.book-card');
+    if (card) {
+      pool.appendChild(card);
+      slot.innerHTML = `<div class="slot-number">${['①','②','③','④'][i]}</div>`;
+      slot.classList.remove('occupied');
+    }
+  });
+  gameState.slotBooks = [null,null,null,null];
+  setFeedback('다시 배열해보세요!', '');
+  hideHint();
+}
+
+// ======================================================
+// TIMER
+// ======================================================
+function startTimer() {
+  gameState.timeLeft = TOTAL_TIME;
+  updateTimerDisplay();
+  gameState.timerInterval = setInterval(() => {
+    gameState.timeLeft--;
+    updateTimerDisplay();
+    updateProgressBar();
+    if (gameState.timeLeft <= 0) {
+      clearInterval(gameState.timerInterval);
+      showResult();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const min = Math.floor(gameState.timeLeft / 60);
+  const sec = gameState.timeLeft % 60;
+  const el = document.getElementById('timerVal');
+  el.textContent = `${min}:${sec.toString().padStart(2,'0')}`;
+  el.className = 'timer-value' + (gameState.timeLeft <= 15 ? ' warning' : '');
+}
+
+function updateProgressBar() {
+  const pct = (gameState.timeLeft / TOTAL_TIME) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+// ======================================================
+// SCREENS
+// ======================================================
+function showGuide() { document.getElementById('guideModal').classList.remove('hidden'); }
+function hideGuide() { document.getElementById('guideModal').classList.add('hidden'); }
+
+function startGame() {
+  hideGuide();
+  // Reset state
+  gameState.score = 0;
+  gameState.combo = 0;
+  gameState.wrongCount = 0;
+  gameState.squirrelPos = 20;
+  gameState.boosterActive = false;
+  if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+
+  document.getElementById('openingScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.remove('hidden');
+
+  updateBadgeDisplay();
+  renderSquirrel('idle');
+  document.getElementById('squirrelChar').style.left = '20px';
+  document.getElementById('comboDisplay').classList.add('hidden');
+
+  newQuestion();
+  startTimer();
+}
+
+function showResult() {
+  document.getElementById('gameScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+
+  const badge = getBadge(gameState.score);
+  document.getElementById('resultBadge').textContent = badge.icon;
+  document.getElementById('resultRank').textContent = badge.name;
+  document.getElementById('resultScore').textContent = gameState.score;
+
+  const msgs = {
+    novice: '아직 청구기호 정렬이 조금 어렵네요... 괜찮아요! 연습하다 보면 분명 실력이 늘 거예요. 다시 도전해볼까요? 🌱',
+    skilled: '제법 실력이 붙었어요! 조금만 더 연습하면 최고의 도서부가 될 수 있을 것 같아요! 📗',
+    expert: '와, 정말 대단해요! 청구기호 전문가가 다 됐네요. 🔥 최고의 자리까지 조금만 더!',
+    master: '🏆 축하해요! 드디어 최고의 도서부 자격증 획득! 사서쌤이 인정하셨어요! 서가뜰 도서관의 진정한 히어로!'
+  };
+  document.getElementById('resultMsg').textContent = msgs[badge.level];
+
+  const isHappy = gameState.score >= 5;
+  renderResultSquirrel(isHappy ? 'happy' : 'sad');
+}
+
+function goHome() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('openingScreen').classList.remove('hidden');
+}
+
+// ======================================================
+// INIT
+// ======================================================
+window.addEventListener('DOMContentLoaded', () => {
+  renderSquirrel('idle');
+});
+</script>
+</body>
+</html>v
