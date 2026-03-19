@@ -800,8 +800,8 @@ v.2 c.1</div>
       <ul>
         <li>① 분류기호 숫자 순 (813.1 → 813.6 → 814.2)</li>
         <li>② 저자기호 성씨 가나다순 (강→김→박→이)</li>
-        <li>③ 저자기호 숫자 크기순 (73 → 102)</li>
-        <li>④ 저작기호 가나다순 (ㄱ→ㄴ→ㄷ…ㄲ→ㄸ…)</li>
+        <li>③ 저자기호 숫자 문자열순 (102 → 73, 앞자리부터 비교: '1' &lt; '7')</li>
+        <li>④ 저작기호 한국어 표준 자모순 (가→개→갸→거…까→깨… 자음·모음 복합 정렬)</li>
         <li>⑤ 권차·복본 숫자순 (v.1 → v.2)</li>
       </ul>
     </div>
@@ -926,7 +926,24 @@ v.2 c.1</div>
 // DATA & CONSTANTS
 // ======================================================
 const SURNAMES = ['강','고','김','나','남','노','문','박','배','서','성','손','신','안','양','오','우','유','윤','이','임','장','전','정','조','진','최','하','한','홍'];
-const CHOSUNGS = ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ','ㄲ','ㄸ','ㅃ','ㅆ','ㅉ'];
+// 저작기호: 실제 한글 음절 사용 → localeCompare('ko')로 표준 자모 순서 보장
+// 순서: 가<개<갸<거<겨<고<괴<구<귀<그<기<까<깨<나<내<너<노<누<느<니<다<대<도<두<드<디<따<뚜<라<레<로<루<르<리<마<매<머<모<무<므<미<바<배<벼<보<부<브<비<빠<뻐<사<새<서<소<수<스<시<싸<씨<아<애<어<오<우<으<이<자<재<저<조<주<즈<지<짜<째<차<채<처<초<추<츠<치<카<케<코<쿠<크<키<타<테<토<투<트<티<파<페<포<푸<프<피<하<해<허<호<후<흐<히
+const CHOSUNGS = [
+  '가','개','갸','거','겨','고','괴','구','귀','그','기',
+  '까','깨','나','내','너','노','누','느','니',
+  '다','대','도','두','드','디','따','뚜',
+  '라','레','로','루','르','리',
+  '마','매','머','모','무','므','미',
+  '바','배','벼','보','부','브','비','빠','뻐',
+  '사','새','서','소','수','스','시','싸','씨',
+  '아','애','어','오','우','으','이',
+  '자','재','저','조','주','즈','지','짜','째',
+  '차','채','처','초','추','츠','치',
+  '카','케','코','쿠','크','키',
+  '타','테','토','투','트','티',
+  '파','페','포','푸','프','피',
+  '하','해','허','호','후','흐','히'
+];
 const BOOK_COLORS = ['#c0392b','#2980b9','#27ae60','#8e44ad','#d35400','#16a085','#c07829','#2c3e50','#7f2d61','#1a5276'];
 
 // 분류기호 백의 자리에 따른 색상 매핑
@@ -1061,34 +1078,33 @@ function parseAuthor(a) {
 
 // ======================================================
 // SORTING LOGIC (Library order)
+// ── 모든 한글 정렬은 localeCompare('ko', {sensitivity:'variant'})로 처리 ──
+// 이 방식은 한국어 표준 자모 순서(ㄱ<ㄲ<ㄴ<ㄷ<ㄸ... / 가<개<걔<거...)를 완벽하게 준수합니다.
 // ======================================================
-function chosung_order(c) {
-  const order = ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ','ㄲ','ㄸ','ㅃ','ㅆ','ㅉ'];
-  const i = order.indexOf(c);
-  return i === -1 ? 99 : i;
-}
 
-function surname_order(s) {
-  return s.localeCompare('가', 'ko', { sensitivity: 'base' });
+// 두 한글 문자열을 표준 자모 순서로 비교
+function koCompare(a, b) {
+  return a.localeCompare(b, 'ko', { sensitivity: 'variant' });
 }
 
 function compareBooks(a, b) {
-  // 1. 분류기호 숫자 비교
+  // 1. 분류기호: 숫자 크기순
   const ca = parseFloat(a.classNo), cb = parseFloat(b.classNo);
   if (ca !== cb) return ca - cb;
-  // 2. 성씨 가나다순
-  const sc = a.surname.localeCompare(b.surname, 'ko', { sensitivity: 'base' });
+  // 2. 저자기호 성씨: 한국어 표준 자모순 (가<개<권<김<깨)
+  const sc = koCompare(a.surname, b.surname);
   if (sc !== 0) return sc;
-  // 3. 숫자
-  if (a.num !== b.num) return a.num - b.num;
-  // 4. 초성
-  const co = chosung_order(a.chosung) - chosung_order(b.chosung);
+  // 3. 저자기호 숫자: 문자열 앞자리부터 비교 (예: "102" < "73", '1' < '7')
+  const numCmp = String(a.num).localeCompare(String(b.num));
+  if (numCmp !== 0) return numCmp;
+  // 4. 저작기호: 한국어 표준 자모순 (음절 단위로 가<개<갸<거<겨... 완벽 처리)
+  const co = koCompare(a.chosung, b.chosung);
   if (co !== 0) return co;
-  // 5. 권차
+  // 5. 권차: 숫자 크기순
   const va = a.vol ? parseInt(a.vol.replace('v.','')) : 0;
   const vb = b.vol ? parseInt(b.vol.replace('v.','')) : 0;
   if (va !== vb) return va - vb;
-  // 6. 복본
+  // 6. 복본: 숫자 크기순
   const cpa = a.copy ? parseInt(a.copy.replace('c.','')) : 0;
   const cpb = b.copy ? parseInt(b.copy.replace('c.','')) : 0;
   return cpa - cpb;
@@ -1101,8 +1117,25 @@ function getSortedOrder(books) {
 // ======================================================
 // RENDER
 // ======================================================
+function formatClassNo(classNo) {
+  // 소수점 아래가 모두 0이면 소수점 없이 표시, 있으면 소수점 둘째자리까지
+  const n = parseFloat(classNo);
+  const intPart = Math.floor(n);
+  const frac = Math.round((n - intPart) * 100); // 0~99
+  if (frac === 0) {
+    // 정수 부분을 3자리 유지 (도서관 관행: 005, 312 등)
+    return String(intPart).padStart(3, '0');
+  } else if (frac % 10 === 0) {
+    // 소수점 첫째자리만 의미 있음 → 한 자리만 표시 (예: 312.60 → 312.6)
+    return String(intPart).padStart(3, '0') + '.' + String(frac / 10);
+  } else {
+    // 소수점 둘째자리까지 표시 (예: 312.62)
+    return String(intPart).padStart(3, '0') + '.' + String(frac).padStart(2, '0');
+  }
+}
+
 function callNoDisplay(book) {
-  let lines = [book.classNo, book.author];
+  let lines = [formatClassNo(book.classNo), book.author];
   if (book.vol) lines.push(book.vol);
   if (book.copy) lines.push(book.copy);
   return lines.join('\n');
@@ -1436,13 +1469,13 @@ function showHint(correctOrder, userOrder) {
       const userBook = gameState.currentBooks.find(b => b.id === userOrder[i]);
       if (correctBook && userBook) {
         if (parseFloat(correctBook.classNo) !== parseFloat(userBook.classNo)) {
-          hintText = `분류기호 ${userBook.classNo}은(는) ${correctBook.classNo}보다 뒤에 있어야 해요!`;
+          hintText = `분류기호 ${formatClassNo(userBook.classNo)}은(는) ${formatClassNo(correctBook.classNo)}보다 뒤에 있어야 해요!`;
         } else if (correctBook.surname !== userBook.surname) {
           hintText = `저자 성씨 '${userBook.surname}'은(는) '${correctBook.surname}'보다 뒤에 와야 해요! (가나다순)`;
         } else if (correctBook.num !== userBook.num) {
-          hintText = `저자기호 숫자 ${userBook.num}과 ${correctBook.num}의 순서를 확인해보세요! (숫자가 작은 것이 앞)`;
+          hintText = `저자기호 숫자 ${userBook.num}과 ${correctBook.num}의 순서를 확인해보세요! (앞자리부터 문자열 순서 비교)`;
         } else {
-          hintText = `저작기호(초성) '${userBook.chosung}'과 '${correctBook.chosung}'의 순서를 확인해보세요!`;
+          hintText = `저작기호 '${userBook.chosung}'은(는) '${correctBook.chosung}'보다 뒤에 와야 해요! (한국어 표준 자모 순서)`;
         }
       }
       break;
